@@ -5,6 +5,7 @@ import com.javatravel.interfaces.IGuardable;
 import com.javatravel.model.Boleto;
 
 import java.sql.*;
+import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,16 +23,30 @@ public class BoletoDAO implements IGuardable<Boleto> {
             throw new RuntimeException("El asiento " + boleto.getAsiento() + " ya está ocupado");
         }
         
-        String sql = "INSERT INTO boletos (id_viaje, id_pasajero, asiento, tipo_asiento, precio_final, fecha_compra) VALUES (?, ?, ?, ?, ?, ?)";
+        // Verificar si la columna tipo_asiento existe
+        boolean tieneTipoAsiento = verificarColumnaTipoAsiento();
+        String sql;
+        
+        if (tieneTipoAsiento) {
+            sql = "INSERT INTO boletos (id_viaje, id_pasajero, asiento, tipo_asiento, precio_final, fecha_compra) VALUES (?, ?, ?, ?, ?, ?)";
+        } else {
+            sql = "INSERT INTO boletos (id_viaje, id_pasajero, asiento, precio_final, fecha_compra) VALUES (?, ?, ?, ?, ?)";
+        }
+        
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             pstmt.setInt(1, boleto.getIdViaje());
             pstmt.setInt(2, boleto.getIdPasajero());
             pstmt.setString(3, boleto.getAsiento());
-            pstmt.setString(4, boleto.getTipoAsiento() != null ? boleto.getTipoAsiento() : "NORMAL");
-            pstmt.setDouble(5, boleto.getPrecioFinal());
-            pstmt.setTimestamp(6, Timestamp.valueOf(boleto.getFechaCompra()));
+            
+            int paramIndex = 4;
+            if (tieneTipoAsiento) {
+                pstmt.setString(paramIndex++, boleto.getTipoAsiento() != null ? boleto.getTipoAsiento() : "NORMAL");
+            }
+            
+            pstmt.setDouble(paramIndex++, boleto.getPrecioFinal());
+            pstmt.setTimestamp(paramIndex, Timestamp.valueOf(boleto.getFechaCompra()));
             
             int rows = pstmt.executeUpdate();
             if (rows > 0) {
@@ -49,16 +64,29 @@ public class BoletoDAO implements IGuardable<Boleto> {
     
     @Override
     public boolean actualizar(Boleto boleto) {
-        String sql = "UPDATE boletos SET id_viaje=?, id_pasajero=?, asiento=?, tipo_asiento=?, precio_final=? WHERE id_boleto=?";
+        boolean tieneTipoAsiento = verificarColumnaTipoAsiento();
+        String sql;
+        
+        if (tieneTipoAsiento) {
+            sql = "UPDATE boletos SET id_viaje=?, id_pasajero=?, asiento=?, tipo_asiento=?, precio_final=? WHERE id_boleto=?";
+        } else {
+            sql = "UPDATE boletos SET id_viaje=?, id_pasajero=?, asiento=?, precio_final=? WHERE id_boleto=?";
+        }
+        
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setInt(1, boleto.getIdViaje());
             pstmt.setInt(2, boleto.getIdPasajero());
             pstmt.setString(3, boleto.getAsiento());
-            pstmt.setString(4, boleto.getTipoAsiento() != null ? boleto.getTipoAsiento() : "NORMAL");
-            pstmt.setDouble(5, boleto.getPrecioFinal());
-            pstmt.setInt(6, boleto.getId());
+            
+            int paramIndex = 4;
+            if (tieneTipoAsiento) {
+                pstmt.setString(paramIndex++, boleto.getTipoAsiento() != null ? boleto.getTipoAsiento() : "NORMAL");
+            }
+            
+            pstmt.setDouble(paramIndex++, boleto.getPrecioFinal());
+            pstmt.setInt(paramIndex, boleto.getId());
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -218,6 +246,30 @@ public class BoletoDAO implements IGuardable<Boleto> {
             e.printStackTrace();
         }
         return false;
+    }
+    
+    /**
+     * Verifica si la columna tipo_asiento existe en la tabla boletos
+     * Cachea el resultado para evitar múltiples consultas
+     */
+    private static Boolean tieneColumnaTipoAsiento = null;
+    
+    private boolean verificarColumnaTipoAsiento() {
+        if (tieneColumnaTipoAsiento != null) {
+            return tieneColumnaTipoAsiento;
+        }
+        
+        try (Connection conn = DatabaseConfig.getConnection()) {
+            DatabaseMetaData metaData = conn.getMetaData();
+            ResultSet rs = metaData.getColumns(null, null, "boletos", "tipo_asiento");
+            tieneColumnaTipoAsiento = rs.next();
+            rs.close();
+        } catch (SQLException e) {
+            // Si hay error, asumir que no existe
+            tieneColumnaTipoAsiento = false;
+        }
+        
+        return tieneColumnaTipoAsiento;
     }
 }
 

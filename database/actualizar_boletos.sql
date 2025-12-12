@@ -1,11 +1,17 @@
 -- Script para actualizar la tabla boletos con el campo tipo_asiento
 -- Ejecutar este script si la columna tipo_asiento no existe en la tabla boletos
+-- NOTA: MySQL no soporta IF NOT EXISTS en ALTER TABLE, por lo que este script
+-- puede fallar si la columna ya existe. En ese caso, ignorar el error.
 
 USE javatravel_db;
 
--- Agregar columna tipo_asiento si no existe
+-- Verificar si la columna existe antes de agregarla (solo para referencia)
+-- Si la columna ya existe, este comando fallará con error 1060
+-- Eso es normal y puede ignorarse
+
+-- Agregar columna tipo_asiento
 ALTER TABLE boletos 
-    ADD COLUMN IF NOT EXISTS tipo_asiento VARCHAR(10) NOT NULL DEFAULT 'NORMAL' 
+    ADD COLUMN tipo_asiento VARCHAR(10) NOT NULL DEFAULT 'NORMAL' 
     AFTER asiento;
 
 -- Actualizar registros existentes que no tengan tipo_asiento

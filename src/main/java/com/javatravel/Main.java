@@ -2,6 +2,7 @@ package com.javatravel;
 
 import com.javatravel.gui.DashboardFrame;
 import com.javatravel.util.DataInitializer;
+import com.javatravel.util.DatabaseMigration;
 
 import javax.swing.*;
 
@@ -18,8 +19,17 @@ public class Main {
         System.out.println("========================================");
         System.out.println("  JavaTravel - Sistema de Gestión");
         System.out.println("========================================");
-        System.out.println("Verificando datos de prueba...");
         
+        // Verificar y actualizar esquema de base de datos
+        System.out.println("Verificando esquema de base de datos...");
+        try {
+            DatabaseMigration.verificarYActualizarEsquema();
+        } catch (Exception e) {
+            System.err.println("Advertencia: No se pudo verificar/actualizar el esquema: " + e.getMessage());
+            System.err.println("La aplicación continuará, pero puede haber errores si falta la columna tipo_asiento");
+        }
+        
+        System.out.println("Verificando datos de prueba...");
         try {
             DataInitializer.inicializarDatos();
         } catch (Exception e) {
