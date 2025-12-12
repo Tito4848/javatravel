@@ -165,61 +165,61 @@ public class DataInitializer {
             
             // Viaje 1 - Algunos asientos ocupados
             double precio1 = calc.calcularPrecioFinal(80.00, "NORMAL", 35);
-            Boleto b1 = new Boleto(viaje1.getId(), p1.getId(), "A1", precio1);
+            Boleto b1 = new Boleto(viaje1.getId(), p1.getId(), "A1", "NORMAL", precio1);
             boletoDAO.guardar(b1);
             
             double precio2 = calc.calcularPrecioFinal(80.00, "NORMAL", 28);
-            Boleto b2 = new Boleto(viaje1.getId(), p2.getId(), "B1", precio2);
+            Boleto b2 = new Boleto(viaje1.getId(), p2.getId(), "B1", "NORMAL", precio2);
             boletoDAO.guardar(b2);
             
             double precio3 = calc.calcularPrecioFinal(80.00, "NORMAL", 45);
-            Boleto b3 = new Boleto(viaje1.getId(), p3.getId(), "C1", precio3);
+            Boleto b3 = new Boleto(viaje1.getId(), p3.getId(), "C1", "NORMAL", precio3);
             boletoDAO.guardar(b3);
             
             double precio4 = calc.calcularPrecioFinal(80.00, "NORMAL", 15);
-            Boleto b4 = new Boleto(viaje1.getId(), p4.getId(), "D1", precio4);
+            Boleto b4 = new Boleto(viaje1.getId(), p4.getId(), "D1", "NORMAL", precio4);
             boletoDAO.guardar(b4);
             
             double precio5 = calc.calcularPrecioFinal(80.00, "NORMAL", 70);
-            Boleto b5 = new Boleto(viaje1.getId(), p5.getId(), "A2", precio5);
+            Boleto b5 = new Boleto(viaje1.getId(), p5.getId(), "A2", "NORMAL", precio5);
             boletoDAO.guardar(b5);
             
             // Viaje 2 - Algunos asientos ocupados
             double precio6 = calc.calcularPrecioFinal(50.00, "NORMAL", 25);
-            Boleto b6 = new Boleto(viaje2.getId(), p6.getId(), "A1", precio6);
+            Boleto b6 = new Boleto(viaje2.getId(), p6.getId(), "A1", "NORMAL", precio6);
             boletoDAO.guardar(b6);
             
             double precio7 = calc.calcularPrecioFinal(50.00, "NORMAL", 32);
-            Boleto b7 = new Boleto(viaje2.getId(), p7.getId(), "B1", precio7);
+            Boleto b7 = new Boleto(viaje2.getId(), p7.getId(), "B1", "NORMAL", precio7);
             boletoDAO.guardar(b7);
             
             double precio8 = calc.calcularPrecioFinal(50.00, "NORMAL", 55);
-            Boleto b8 = new Boleto(viaje2.getId(), p8.getId(), "C1", precio8);
+            Boleto b8 = new Boleto(viaje2.getId(), p8.getId(), "C1", "NORMAL", precio8);
             boletoDAO.guardar(b8);
             
             double precio9 = calc.calcularPrecioFinal(50.00, "NORMAL", 12);
-            Boleto b9 = new Boleto(viaje2.getId(), p9.getId(), "D1", precio9);
+            Boleto b9 = new Boleto(viaje2.getId(), p9.getId(), "D1", "NORMAL", precio9);
             boletoDAO.guardar(b9);
             
             double precio10 = calc.calcularPrecioFinal(50.00, "NORMAL", 68);
-            Boleto b10 = new Boleto(viaje2.getId(), p10.getId(), "A2", precio10);
+            Boleto b10 = new Boleto(viaje2.getId(), p10.getId(), "A2", "NORMAL", precio10);
             boletoDAO.guardar(b10);
             
             // Viaje 3 (Bus DOS_PISOS) - Algunos VIP ocupados
             double precio11 = calc.calcularPrecioFinal(80.00, "VIP", 40);
-            Boleto b11 = new Boleto(viaje3.getId(), p11.getId(), "A1", precio11);
+            Boleto b11 = new Boleto(viaje3.getId(), p11.getId(), "A1", "VIP", precio11);
             boletoDAO.guardar(b11);
             
             double precio12 = calc.calcularPrecioFinal(80.00, "VIP", 22);
-            Boleto b12 = new Boleto(viaje3.getId(), p12.getId(), "B1", precio12);
+            Boleto b12 = new Boleto(viaje3.getId(), p12.getId(), "B1", "VIP", precio12);
             boletoDAO.guardar(b12);
             
             double precio13 = calc.calcularPrecioFinal(80.00, "VIP", 15);
-            Boleto b13 = new Boleto(viaje3.getId(), p4.getId(), "A2", precio13);
+            Boleto b13 = new Boleto(viaje3.getId(), p4.getId(), "A2", "VIP", precio13);
             boletoDAO.guardar(b13);
             
             double precio14 = calc.calcularPrecioFinal(80.00, "VIP", 70);
-            Boleto b14 = new Boleto(viaje3.getId(), p5.getId(), "B2", precio14);
+            Boleto b14 = new Boleto(viaje3.getId(), p5.getId(), "B2", "VIP", precio14);
             boletoDAO.guardar(b14);
             
             System.out.println("Datos de prueba inicializados correctamente!");

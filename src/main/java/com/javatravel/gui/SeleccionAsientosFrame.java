@@ -316,24 +316,162 @@ public class SeleccionAsientosFrame extends JFrame {
     /**
      * Método que DIBUJA el bus como una matriz de botones
      * Representa visualmente la distribución de asientos del vehículo
+     * Para buses de dos pisos, muestra los pisos separados visualmente
      */
     private void cargarAsientos() {
         Vehiculo vehiculo = viaje.getVehiculo();
         int capacidad = vehiculo.getCapacidad();
         Set<String> asientosOcupados = boletoDAO.obtenerAsientosOcupados(viaje.getId());
         
-        // DISTRIBUCIÓN DEL BUS: 4 columnas (A, B, C, D) con pasillo entre B y C
-        // Estructura: [A] [B] | PASILLO | [C] [D]
-        int filas = (int) Math.ceil(capacidad / 4.0);
+        panelAsientos.removeAll();
+        panelAsientos.setLayout(new BorderLayout());
+        
+        // Si es bus de dos pisos, mostrar pisos separados
+        if (vehiculo instanceof BusDosPisos) {
+            BusDosPisos busDosPisos = (BusDosPisos) vehiculo;
+            int capacidadPiso1 = busDosPisos.getCapacidadPiso1();
+            int capacidadPiso2 = busDosPisos.getCapacidadPiso2();
+            
+            JPanel panelContenedor = new JPanel();
+            panelContenedor.setLayout(new BoxLayout(panelContenedor, BoxLayout.Y_AXIS));
+            
+            // PISO 1 - VIP
+            JPanel panelPiso1 = crearPanelPiso("PISO 1 - ASIENTOS VIP", capacidadPiso1, 1, busDosPisos, asientosOcupados);
+            panelPiso1.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(255, 165, 0), 3),
+                "PISO 1 - ASIENTOS VIP (Primer Piso)",
+                javax.swing.border.TitledBorder.CENTER,
+                javax.swing.border.TitledBorder.TOP,
+                new Font("Arial", Font.BOLD, 14),
+                new Color(255, 140, 0)));
+            panelPiso1.setBackground(new Color(255, 250, 240));
+            
+            // Separador visual entre pisos
+            JPanel panelSeparador = new JPanel();
+            panelSeparador.setPreferredSize(new Dimension(0, 20));
+            panelSeparador.setBackground(new Color(200, 200, 200));
+            JLabel lblSeparador = new JLabel("═══════════════════════════════════════════════════════", JLabel.CENTER);
+            lblSeparador.setFont(new Font("Arial", Font.BOLD, 12));
+            lblSeparador.setForeground(new Color(100, 100, 100));
+            panelSeparador.add(lblSeparador);
+            
+            // PISO 2 - NORMAL
+            JPanel panelPiso2 = crearPanelPiso("PISO 2 - ASIENTOS NORMALES", capacidadPiso2, capacidadPiso1 + 1, busDosPisos, asientosOcupados);
+            panelPiso2.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(Color.BLUE, 2),
+                "PISO 2 - ASIENTOS NORMALES (Segundo Piso)",
+                javax.swing.border.TitledBorder.CENTER,
+                javax.swing.border.TitledBorder.TOP,
+                new Font("Arial", Font.BOLD, 14),
+                Color.BLUE));
+            panelPiso2.setBackground(new Color(240, 248, 255));
+            
+            panelContenedor.add(panelPiso1);
+            panelContenedor.add(panelSeparador);
+            panelContenedor.add(panelPiso2);
+            
+            JScrollPane scrollAsientos = new JScrollPane(panelContenedor);
+            scrollAsientos.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLoweredBevelBorder(), 
+                "Distribución de Asientos del Bus de Dos Pisos"));
+            scrollAsientos.setPreferredSize(new Dimension(500, 500));
+            
+            panelAsientos.add(scrollAsientos, BorderLayout.CENTER);
+        } else {
+            // Bus estándar - una sola matriz
+            int filas = (int) Math.ceil(capacidad / 4.0);
+            int columnas = 4;
+            
+            JPanel panelMatriz = crearMatrizAsientos(capacidad, filas, columnas, vehiculo, asientosOcupados);
+            
+            JScrollPane scrollAsientos = new JScrollPane(panelMatriz);
+            scrollAsientos.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLoweredBevelBorder(), 
+                "Distribución de Asientos del Bus Estándar"));
+            scrollAsientos.setPreferredSize(new Dimension(400, 400));
+            
+            panelAsientos.add(scrollAsientos, BorderLayout.CENTER);
+        }
+        
+        panelAsientos.revalidate();
+        panelAsientos.repaint();
+        
+        cargarPasajeros();
+    }
+    
+    /**
+     * Crea un panel para un piso específico del bus
+     */
+    private JPanel crearPanelPiso(String titulo, int capacidadPiso, int inicioContador, BusDosPisos busDosPisos, Set<String> asientosOcupados) {
+        int filas = (int) Math.ceil(capacidadPiso / 4.0);
         int columnas = 4;
         
-        panelAsientos.removeAll();
+        JPanel panelPiso = new JPanel(new BorderLayout(5, 5));
+        panelPiso.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        // Panel principal con BorderLayout para organizar mejor
-        JPanel panelPrincipal = new JPanel(new BorderLayout(10, 10));
+        // Panel con la matriz de asientos
+        JPanel panelMatriz = new JPanel(new GridLayout(filas + 1, 6, 5, 5));
+        panelMatriz.setBackground(new Color(250, 250, 250));
         
-        // Panel central con la matriz de asientos - REPRESENTACIÓN GRÁFICA DEL BUS
-        // Estructura: [Fila] [A] [B] [Pasillo] [C] [D] = 6 columnas
+        // Fila de encabezados
+        panelMatriz.add(new JLabel("Fila", JLabel.CENTER));
+        panelMatriz.add(new JLabel("A", JLabel.CENTER));
+        panelMatriz.add(new JLabel("B", JLabel.CENTER));
+        JLabel lblPasilloHeader = new JLabel("│", JLabel.CENTER);
+        lblPasilloHeader.setFont(new Font("Arial", Font.BOLD, 16));
+        lblPasilloHeader.setForeground(Color.GRAY);
+        panelMatriz.add(lblPasilloHeader);
+        panelMatriz.add(new JLabel("C", JLabel.CENTER));
+        panelMatriz.add(new JLabel("D", JLabel.CENTER));
+        
+        JButton[][] botonesPiso = new JButton[filas][columnas];
+        String[] letras = {"A", "B", "C", "D"};
+        
+        int contador = inicioContador;
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < columnas; j++) {
+                if (contador <= (inicioContador + capacidadPiso - 1)) {
+                    String codigoAsiento = letras[j] + contador;
+                    JButton btn = crearBotonAsiento(codigoAsiento, busDosPisos.esAsientoVIP(codigoAsiento) ? "VIP" : "NORMAL", asientosOcupados);
+                    botonesPiso[i][j] = btn;
+                    contador++;
+                } else {
+                    botonesPiso[i][j] = null;
+                }
+            }
+        }
+        
+        // Agregar botones al panel
+        for (int i = 0; i < filas; i++) {
+            JLabel lblFila = new JLabel(String.valueOf(i + 1), JLabel.CENTER);
+            lblFila.setFont(new Font("Arial", Font.BOLD, 11));
+            panelMatriz.add(lblFila);
+            
+            for (int j = 0; j < columnas; j++) {
+                if (j == 2) {
+                    // Pasillo visual
+                    JLabel lblPasillo = new JLabel("│", JLabel.CENTER);
+                    lblPasillo.setFont(new Font("Arial", Font.BOLD, 18));
+                    lblPasillo.setForeground(new Color(150, 150, 150));
+                    panelMatriz.add(lblPasillo);
+                }
+                
+                if (botonesPiso[i][j] != null) {
+                    panelMatriz.add(botonesPiso[i][j]);
+                } else {
+                    panelMatriz.add(new JLabel(""));
+                }
+            }
+        }
+        
+        panelPiso.add(panelMatriz, BorderLayout.CENTER);
+        return panelPiso;
+    }
+    
+    /**
+     * Crea una matriz de asientos para bus estándar
+     */
+    private JPanel crearMatrizAsientos(int capacidad, int filas, int columnas, Vehiculo vehiculo, Set<String> asientosOcupados) {
         JPanel panelMatriz = new JPanel(new GridLayout(filas + 1, 6, 5, 5));
         panelMatriz.setBackground(new Color(240, 240, 240));
         
@@ -351,72 +489,12 @@ public class SeleccionAsientosFrame extends JFrame {
         botonesAsientos = new JButton[filas][columnas];
         String[] letras = {"A", "B", "C", "D"};
         
-        // PRIMERO: Crear todos los botones y guardarlos en la matriz
         int contador = 1;
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
                 if (contador <= capacidad) {
-                    // Formato: A1, A2, B1, B2, etc.
                     String codigoAsiento = letras[j] + contador;
-                    JButton btn = new JButton(codigoAsiento);
-                    btn.setFont(new Font("Arial", Font.BOLD, 11));
-                    btn.setPreferredSize(new Dimension(55, 50));
-                    btn.setFocusPainted(false);
-                    btn.setBorderPainted(true);
-                    
-                    // Determinar tipo de asiento (para buses de dos pisos)
-                    String tipoAsiento = "NORMAL";
-                    if (vehiculo instanceof BusDosPisos) {
-                        BusDosPisos busDosPisos = (BusDosPisos) vehiculo;
-                        if (busDosPisos.esAsientoVIP(codigoAsiento)) {
-                            tipoAsiento = "VIP";
-                            btn.setToolTipText("Asiento VIP - Primer Piso");
-                            btn.setBorder(BorderFactory.createLineBorder(Color.ORANGE, 2));
-                        } else {
-                            btn.setToolTipText("Asiento Normal - Segundo Piso");
-                        }
-                    } else {
-                        btn.setToolTipText("Asiento Normal");
-                    }
-                    
-                    // ESTADO VISUAL DEL ASIENTO - GESTIÓN DE ESTADOS
-                    if (asientosOcupados.contains(codigoAsiento)) {
-                        // ROJO: OCUPADO (Vendido)
-                        btn.setBackground(new Color(220, 20, 20));
-                        btn.setForeground(Color.WHITE);
-                        btn.setEnabled(false);
-                        btn.setToolTipText("OCUPADO - " + btn.getToolTipText());
-                    } else {
-                        // VERDE: DISPONIBLE
-                        btn.setBackground(new Color(50, 200, 50));
-                        btn.setForeground(Color.BLACK);
-                        btn.setEnabled(true);
-                        btn.setOpaque(true);
-                        btn.setContentAreaFilled(true);
-                        
-                        final String codigo = codigoAsiento;
-                        final String tipo = tipoAsiento;
-                        final JButton btnFinal = btn;
-                        
-                        // ActionListener para gestionar la selección visual
-                        btn.addActionListener(e -> {
-                            // Resetear botón anterior seleccionado
-                            if (asientoSeleccionado != null) {
-                                resetearBotones();
-                            }
-                            
-                            // AMARILLO: SELECCIONADO (en proceso de compra)
-                            asientoSeleccionado = codigo;
-                            btnFinal.setBackground(new Color(255, 255, 0));
-                            btnFinal.setForeground(Color.BLACK);
-                            btnFinal.setToolTipText("SELECCIONADO - " + tipo);
-                            
-                            // Actualizar precio automáticamente
-                            actualizarPrecio(lblPrecio, (Integer) spnEdad.getValue());
-                        });
-                    }
-                    
-                    botonesAsientos[i][j] = btn;
+                    botonesAsientos[i][j] = crearBotonAsiento(codigoAsiento, "NORMAL", asientosOcupados);
                     contador++;
                 } else {
                     botonesAsientos[i][j] = null;
@@ -424,60 +502,82 @@ public class SeleccionAsientosFrame extends JFrame {
             }
         }
         
-        // SEGUNDO: Agregar los botones al panel en el orden correcto con pasillo
+        // Agregar botones al panel
         for (int i = 0; i < filas; i++) {
-            // Número de fila
             JLabel lblFila = new JLabel(String.valueOf(i + 1), JLabel.CENTER);
             lblFila.setFont(new Font("Arial", Font.BOLD, 11));
             panelMatriz.add(lblFila);
             
-            // Agregar asientos A y B
-            if (botonesAsientos[i][0] != null) {
-                panelMatriz.add(botonesAsientos[i][0]); // A
-            } else {
-                panelMatriz.add(new JLabel(""));
-            }
-            
-            if (botonesAsientos[i][1] != null) {
-                panelMatriz.add(botonesAsientos[i][1]); // B
-            } else {
-                panelMatriz.add(new JLabel(""));
-            }
-            
-            // Pasillo visual
-            JLabel lblPasilloFila = new JLabel("│", JLabel.CENTER);
-            lblPasilloFila.setFont(new Font("Arial", Font.BOLD, 18));
-            lblPasilloFila.setForeground(new Color(150, 150, 150));
-            panelMatriz.add(lblPasilloFila);
-            
-            // Agregar asientos C y D
-            if (botonesAsientos[i][2] != null) {
-                panelMatriz.add(botonesAsientos[i][2]); // C
-            } else {
-                panelMatriz.add(new JLabel(""));
-            }
-            
-            if (botonesAsientos[i][3] != null) {
-                panelMatriz.add(botonesAsientos[i][3]); // D
-            } else {
-                panelMatriz.add(new JLabel(""));
+            for (int j = 0; j < columnas; j++) {
+                if (j == 2) {
+                    JLabel lblPasillo = new JLabel("│", JLabel.CENTER);
+                    lblPasillo.setFont(new Font("Arial", Font.BOLD, 18));
+                    lblPasillo.setForeground(new Color(150, 150, 150));
+                    panelMatriz.add(lblPasillo);
+                }
+                
+                if (botonesAsientos[i][j] != null) {
+                    panelMatriz.add(botonesAsientos[i][j]);
+                } else {
+                    panelMatriz.add(new JLabel(""));
+                }
             }
         }
         
-        // Panel con scroll para asientos
-        JScrollPane scrollAsientos = new JScrollPane(panelMatriz);
-        scrollAsientos.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createLoweredBevelBorder(), 
-            "Distribución de Asientos del Bus (Matriz de Botones)"));
-        scrollAsientos.setPreferredSize(new Dimension(400, 400));
+        return panelMatriz;
+    }
+    
+    /**
+     * Crea un botón de asiento con su configuración visual
+     */
+    private JButton crearBotonAsiento(String codigoAsiento, String tipoAsiento, Set<String> asientosOcupados) {
+        JButton btn = new JButton(codigoAsiento);
+        btn.setFont(new Font("Arial", Font.BOLD, 11));
+        btn.setPreferredSize(new Dimension(55, 50));
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(true);
         
-        panelPrincipal.add(scrollAsientos, BorderLayout.CENTER);
-        panelAsientos.add(panelPrincipal);
+        if ("VIP".equals(tipoAsiento)) {
+            btn.setToolTipText("Asiento VIP - Primer Piso");
+            btn.setBorder(BorderFactory.createLineBorder(new Color(255, 165, 0), 2));
+        } else {
+            btn.setToolTipText("Asiento Normal" + (viaje.getVehiculo() instanceof BusDosPisos ? " - Segundo Piso" : ""));
+        }
         
-        panelAsientos.revalidate();
-        panelAsientos.repaint();
+        // ESTADO VISUAL DEL ASIENTO
+        if (asientosOcupados.contains(codigoAsiento)) {
+            // ROJO: OCUPADO
+            btn.setBackground(new Color(220, 20, 20));
+            btn.setForeground(Color.WHITE);
+            btn.setEnabled(false);
+            btn.setToolTipText("OCUPADO - " + btn.getToolTipText());
+        } else {
+            // VERDE: DISPONIBLE
+            btn.setBackground(new Color(50, 200, 50));
+            btn.setForeground(Color.BLACK);
+            btn.setEnabled(true);
+            btn.setOpaque(true);
+            btn.setContentAreaFilled(true);
+            
+            final String codigo = codigoAsiento;
+            final String tipo = tipoAsiento;
+            final JButton btnFinal = btn;
+            
+            btn.addActionListener(e -> {
+                if (asientoSeleccionado != null) {
+                    resetearBotones();
+                }
+                
+                asientoSeleccionado = codigo;
+                btnFinal.setBackground(new Color(255, 255, 0));
+                btnFinal.setForeground(Color.BLACK);
+                btnFinal.setToolTipText("SELECCIONADO - " + tipo);
+                
+                actualizarPrecio(lblPrecio, (Integer) spnEdad.getValue());
+            });
+        }
         
-        cargarPasajeros();
+        return btn;
     }
     
     private void resetearBotones() {
@@ -490,9 +590,41 @@ public class SeleccionAsientosFrame extends JFrame {
                 if (botonesAsientos[i][j] != null) {
                     String codigo = botonesAsientos[i][j].getText();
                     if (!asientosOcupados.contains(codigo) && botonesAsientos[i][j].isEnabled()) {
-                        botonesAsientos[i][j].setBackground(Color.GREEN);
+                        // Determinar color según tipo de asiento
+                        Vehiculo vehiculo = viaje.getVehiculo();
+                        if (vehiculo instanceof BusDosPisos) {
+                            BusDosPisos busDosPisos = (BusDosPisos) vehiculo;
+                            if (busDosPisos.esAsientoVIP(codigo)) {
+                                botonesAsientos[i][j].setBackground(new Color(50, 200, 50));
+                            } else {
+                                botonesAsientos[i][j].setBackground(new Color(50, 200, 50));
+                            }
+                        } else {
+                            botonesAsientos[i][j].setBackground(new Color(50, 200, 50));
+                        }
                     }
                 }
+            }
+        }
+        
+        // También resetear botones en paneles de dos pisos si existen
+        resetearBotonesEnPanel(panelAsientos);
+    }
+    
+    private void resetearBotonesEnPanel(Container container) {
+        Component[] components = container.getComponents();
+        for (Component comp : components) {
+            if (comp instanceof JButton) {
+                JButton btn = (JButton) comp;
+                String codigo = btn.getText();
+                if (codigo != null && codigo.matches("[A-D]\\d+")) {
+                    Set<String> asientosOcupados = boletoDAO.obtenerAsientosOcupados(viaje.getId());
+                    if (!asientosOcupados.contains(codigo) && btn.isEnabled() && !codigo.equals(asientoSeleccionado)) {
+                        btn.setBackground(new Color(50, 200, 50));
+                    }
+                }
+            } else if (comp instanceof Container) {
+                resetearBotonesEnPanel((Container) comp);
             }
         }
     }
@@ -610,8 +742,8 @@ public class SeleccionAsientosFrame extends JFrame {
             double precioBase = viaje.getRuta().getPrecioBase();
             double precioFinal = calculadora.calcularPrecioFinal(precioBase, tipoAsiento, edad);
             
-            // Crear boleto
-            Boleto boleto = new Boleto(viaje.getId(), pasajero.getId(), asientoSeleccionado, precioFinal);
+            // Crear boleto con tipo de asiento
+            Boleto boleto = new Boleto(viaje.getId(), pasajero.getId(), asientoSeleccionado, tipoAsiento, precioFinal);
             
             if (boletoDAO.guardar(boleto)) {
                 String mensaje = String.format(

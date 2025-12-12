@@ -47,6 +47,11 @@ public class ViajeDAO implements IGuardable<Viaje> {
     
     @Override
     public boolean actualizar(Viaje viaje) {
+        // Validar que no haya solapamiento de horarios al actualizar
+        if (tieneSolapamiento(viaje)) {
+            throw new RuntimeException("El bus ya está asignado a otro viaje en ese horario");
+        }
+        
         String sql = "UPDATE viajes SET id_bus=?, id_ruta=?, fecha_salida=?, hora_salida=? WHERE id_viaje=?";
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

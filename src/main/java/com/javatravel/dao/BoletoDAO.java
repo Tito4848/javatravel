@@ -22,15 +22,16 @@ public class BoletoDAO implements IGuardable<Boleto> {
             throw new RuntimeException("El asiento " + boleto.getAsiento() + " ya está ocupado");
         }
         
-        String sql = "INSERT INTO boletos (id_viaje, id_pasajero, asiento, precio_final, fecha_compra) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO boletos (id_viaje, id_pasajero, asiento, tipo_asiento, precio_final, fecha_compra) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             pstmt.setInt(1, boleto.getIdViaje());
             pstmt.setInt(2, boleto.getIdPasajero());
             pstmt.setString(3, boleto.getAsiento());
-            pstmt.setDouble(4, boleto.getPrecioFinal());
-            pstmt.setTimestamp(5, Timestamp.valueOf(boleto.getFechaCompra()));
+            pstmt.setString(4, boleto.getTipoAsiento() != null ? boleto.getTipoAsiento() : "NORMAL");
+            pstmt.setDouble(5, boleto.getPrecioFinal());
+            pstmt.setTimestamp(6, Timestamp.valueOf(boleto.getFechaCompra()));
             
             int rows = pstmt.executeUpdate();
             if (rows > 0) {
@@ -48,15 +49,16 @@ public class BoletoDAO implements IGuardable<Boleto> {
     
     @Override
     public boolean actualizar(Boleto boleto) {
-        String sql = "UPDATE boletos SET id_viaje=?, id_pasajero=?, asiento=?, precio_final=? WHERE id_boleto=?";
+        String sql = "UPDATE boletos SET id_viaje=?, id_pasajero=?, asiento=?, tipo_asiento=?, precio_final=? WHERE id_boleto=?";
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setInt(1, boleto.getIdViaje());
             pstmt.setInt(2, boleto.getIdPasajero());
             pstmt.setString(3, boleto.getAsiento());
-            pstmt.setDouble(4, boleto.getPrecioFinal());
-            pstmt.setInt(5, boleto.getId());
+            pstmt.setString(4, boleto.getTipoAsiento() != null ? boleto.getTipoAsiento() : "NORMAL");
+            pstmt.setDouble(5, boleto.getPrecioFinal());
+            pstmt.setInt(6, boleto.getId());
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -172,14 +174,27 @@ public class BoletoDAO implements IGuardable<Boleto> {
     }
     
     private Boleto crearBoletoDesdeResultSet(ResultSet rs) throws SQLException {
-        return new Boleto(
+        String tipoAsiento = "NORMAL";
+        try {
+            tipoAsiento = rs.getString("tipo_asiento");
+            if (tipoAsiento == null || tipoAsiento.isEmpty()) {
+                tipoAsiento = "NORMAL";
+            }
+        } catch (SQLException e) {
+            // Si la columna no existe, usar NORMAL por defecto
+            tipoAsiento = "NORMAL";
+        }
+        
+        Boleto boleto = new Boleto(
             rs.getInt("id_boleto"),
             rs.getInt("id_viaje"),
             rs.getInt("id_pasajero"),
             rs.getString("asiento"),
+            tipoAsiento,
             rs.getDouble("precio_final"),
             rs.getTimestamp("fecha_compra").toLocalDateTime()
         );
+        return boleto;
     }
     
     private void cargarRelaciones(Boleto boleto) {

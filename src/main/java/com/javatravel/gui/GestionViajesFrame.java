@@ -181,8 +181,18 @@ public class GestionViajesFrame extends JFrame {
                 } else {
                     JOptionPane.showMessageDialog(this, "Error al programar viaje", "Error", JOptionPane.ERROR_MESSAGE);
                 }
+            } catch (RuntimeException ex) {
+                JOptionPane.showMessageDialog(this, 
+                    "Error de validación: " + ex.getMessage() + 
+                    "\n\nVerifique que el bus no esté asignado a otro viaje en el mismo horario.", 
+                    "Error de Validación", 
+                    JOptionPane.ERROR_MESSAGE);
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, 
+                    "Error: " + ex.getMessage(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
             }
         });
         
@@ -209,8 +219,116 @@ public class GestionViajesFrame extends JFrame {
         Viaje viaje = viajeDAO.buscarPorId(id);
         
         if (viaje != null) {
-            JOptionPane.showMessageDialog(this, "Funcionalidad de edición en desarrollo");
+            mostrarDialogoEditarViaje(viaje);
         }
+    }
+    
+    private void mostrarDialogoEditarViaje(Viaje viaje) {
+        JDialog dialog = new JDialog(this, "Editar Viaje", true);
+        dialog.setSize(450, 350);
+        dialog.setLocationRelativeTo(this);
+        
+        JPanel panel = new JPanel(new GridLayout(5, 2, 5, 5));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Combo de buses
+        JComboBox<Vehiculo> cmbBus = new JComboBox<>();
+        List<Vehiculo> buses = busDAO.listarTodos();
+        Vehiculo busSeleccionado = null;
+        for (Vehiculo bus : buses) {
+            cmbBus.addItem(bus);
+            if (bus.getId() == viaje.getIdBus()) {
+                busSeleccionado = bus;
+            }
+        }
+        if (busSeleccionado != null) {
+            cmbBus.setSelectedItem(busSeleccionado);
+        }
+        
+        // Combo de rutas
+        JComboBox<Ruta> cmbRuta = new JComboBox<>();
+        List<Ruta> rutas = rutaDAO.listarTodos();
+        Ruta rutaSeleccionada = null;
+        for (Ruta ruta : rutas) {
+            cmbRuta.addItem(ruta);
+            if (ruta.getId() == viaje.getIdRuta()) {
+                rutaSeleccionada = ruta;
+            }
+        }
+        if (rutaSeleccionada != null) {
+            cmbRuta.setSelectedItem(rutaSeleccionada);
+        }
+        
+        // Fecha
+        Calendar calFecha = Calendar.getInstance();
+        calFecha.set(viaje.getFechaSalida().getYear(), viaje.getFechaSalida().getMonthValue() - 1, viaje.getFechaSalida().getDayOfMonth());
+        calFecha.set(Calendar.HOUR_OF_DAY, 0);
+        calFecha.set(Calendar.MINUTE, 0);
+        calFecha.set(Calendar.SECOND, 0);
+        calFecha.set(Calendar.MILLISECOND, 0);
+        JSpinner spnFecha = new JSpinner(new SpinnerDateModel(calFecha.getTime(), null, null, Calendar.DAY_OF_MONTH));
+        JSpinner.DateEditor editorFecha = new JSpinner.DateEditor(spnFecha, "dd/MM/yyyy");
+        spnFecha.setEditor(editorFecha);
+        
+        // Hora
+        Calendar calHora = Calendar.getInstance();
+        calHora.set(Calendar.HOUR_OF_DAY, viaje.getHoraSalida().getHour());
+        calHora.set(Calendar.MINUTE, viaje.getHoraSalida().getMinute());
+        calHora.set(Calendar.SECOND, 0);
+        calHora.set(Calendar.MILLISECOND, 0);
+        JSpinner spnHora = new JSpinner(new SpinnerDateModel(calHora.getTime(), null, null, Calendar.HOUR_OF_DAY));
+        JSpinner.DateEditor editorHora = new JSpinner.DateEditor(spnHora, "HH:mm");
+        spnHora.setEditor(editorHora);
+        
+        panel.add(new JLabel("Bus:"));
+        panel.add(cmbBus);
+        panel.add(new JLabel("Ruta:"));
+        panel.add(cmbRuta);
+        panel.add(new JLabel("Fecha Salida:"));
+        panel.add(spnFecha);
+        panel.add(new JLabel("Hora Salida:"));
+        panel.add(spnHora);
+        
+        JButton btnGuardar = new JButton("Guardar");
+        btnGuardar.addActionListener(e -> {
+            try {
+                Vehiculo bus = (Vehiculo) cmbBus.getSelectedItem();
+                Ruta ruta = (Ruta) cmbRuta.getSelectedItem();
+                java.util.Date fecha = (java.util.Date) spnFecha.getValue();
+                java.util.Date hora = (java.util.Date) spnHora.getValue();
+                
+                LocalDate fechaSalida = new java.sql.Date(fecha.getTime()).toLocalDate();
+                LocalTime horaSalida = new java.sql.Time(hora.getTime()).toLocalTime();
+                
+                viaje.setIdBus(bus.getId());
+                viaje.setIdRuta(ruta.getId());
+                viaje.setFechaSalida(fechaSalida);
+                viaje.setHoraSalida(horaSalida);
+                
+                if (viajeDAO.actualizar(viaje)) {
+                    JOptionPane.showMessageDialog(this, "Viaje actualizado correctamente");
+                    dialog.dispose();
+                    cargarViajes();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error al actualizar viaje", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (RuntimeException ex) {
+                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error de Validación", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.addActionListener(e -> dialog.dispose());
+        
+        JPanel panelBotones = new JPanel(new FlowLayout());
+        panelBotones.add(btnGuardar);
+        panelBotones.add(btnCancelar);
+        
+        dialog.add(panel, BorderLayout.CENTER);
+        dialog.add(panelBotones, BorderLayout.SOUTH);
+        dialog.setVisible(true);
     }
     
     private void eliminarViaje() {

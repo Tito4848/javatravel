@@ -7,6 +7,7 @@ public class Boleto {
     private int idViaje;
     private int idPasajero;
     private String asiento;
+    private String tipoAsiento; // VIP o NORMAL
     private double precioFinal;
     private LocalDateTime fechaCompra;
     private Viaje viaje;
@@ -18,6 +19,16 @@ public class Boleto {
         this.idViaje = idViaje;
         this.idPasajero = idPasajero;
         this.asiento = asiento;
+        this.tipoAsiento = "NORMAL";
+        this.precioFinal = precioFinal;
+        this.fechaCompra = LocalDateTime.now();
+    }
+    
+    public Boleto(int idViaje, int idPasajero, String asiento, String tipoAsiento, double precioFinal) {
+        this.idViaje = idViaje;
+        this.idPasajero = idPasajero;
+        this.asiento = asiento;
+        this.tipoAsiento = tipoAsiento;
         this.precioFinal = precioFinal;
         this.fechaCompra = LocalDateTime.now();
     }
@@ -27,6 +38,17 @@ public class Boleto {
         this.idViaje = idViaje;
         this.idPasajero = idPasajero;
         this.asiento = asiento;
+        this.tipoAsiento = "NORMAL";
+        this.precioFinal = precioFinal;
+        this.fechaCompra = fechaCompra;
+    }
+    
+    public Boleto(int id, int idViaje, int idPasajero, String asiento, String tipoAsiento, double precioFinal, LocalDateTime fechaCompra) {
+        this.id = id;
+        this.idViaje = idViaje;
+        this.idPasajero = idPasajero;
+        this.asiento = asiento;
+        this.tipoAsiento = tipoAsiento;
         this.precioFinal = precioFinal;
         this.fechaCompra = fechaCompra;
     }
@@ -61,6 +83,14 @@ public class Boleto {
     
     public void setAsiento(String asiento) {
         this.asiento = asiento;
+    }
+    
+    public String getTipoAsiento() {
+        return tipoAsiento;
+    }
+    
+    public void setTipoAsiento(String tipoAsiento) {
+        this.tipoAsiento = tipoAsiento;
     }
     
     public double getPrecioFinal() {
