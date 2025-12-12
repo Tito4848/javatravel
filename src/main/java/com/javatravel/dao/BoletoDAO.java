@@ -118,6 +118,26 @@ public class BoletoDAO implements IGuardable<Boleto> {
         return boletos;
     }
     
+    public List<Boleto> listarPorViaje(int idViaje) {
+        List<Boleto> boletos = new ArrayList<>();
+        String sql = "SELECT * FROM boletos WHERE id_viaje=? ORDER BY asiento";
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, idViaje);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                Boleto boleto = crearBoletoDesdeResultSet(rs);
+                cargarRelaciones(boleto);
+                boletos.add(boleto);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return boletos;
+    }
+    
     public Set<String> obtenerAsientosOcupados(int idViaje) {
         Set<String> asientos = new HashSet<>();
         String sql = "SELECT asiento FROM boletos WHERE id_viaje=?";

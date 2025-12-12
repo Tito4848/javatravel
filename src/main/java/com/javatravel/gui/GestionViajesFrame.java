@@ -57,7 +57,7 @@ public class GestionViajesFrame extends JFrame {
         JPanel panelBotones = new JPanel(new FlowLayout());
         
         JButton btnNuevo = new JButton("Nuevo Viaje");
-        btnNuevo.addActionListener(e -> mostrarDialogoNuevoViaje());
+        btnNuevo.addActionListener(e -> mostrarDialogoNuevoViaje(null));
         
         JButton btnEditar = new JButton("Editar");
         btnEditar.addActionListener(e -> editarViaje());
@@ -98,7 +98,12 @@ public class GestionViajesFrame extends JFrame {
         }
     }
     
-    private void mostrarDialogoNuevoViaje() {
+    public void programarViajeParaRuta(Ruta rutaPreseleccionada) {
+        // Permite invocar desde Gestión de Rutas con la ruta ya elegida
+        mostrarDialogoNuevoViaje(rutaPreseleccionada);
+    }
+
+    private void mostrarDialogoNuevoViaje(Ruta rutaPreseleccionada) {
         JDialog dialog = new JDialog(this, "Nuevo Viaje", true);
         dialog.setSize(450, 350);
         dialog.setLocationRelativeTo(this);
@@ -116,8 +121,15 @@ public class GestionViajesFrame extends JFrame {
         // Combo de rutas
         JComboBox<Ruta> cmbRuta = new JComboBox<>();
         List<Ruta> rutas = rutaDAO.listarTodos();
+        Ruta rutaSeleccionada = null;
         for (Ruta ruta : rutas) {
             cmbRuta.addItem(ruta);
+            if (rutaPreseleccionada != null && ruta.getId() == rutaPreseleccionada.getId()) {
+                rutaSeleccionada = ruta;
+            }
+        }
+        if (rutaSeleccionada != null) {
+            cmbRuta.setSelectedItem(rutaSeleccionada);
         }
         
         // Fecha

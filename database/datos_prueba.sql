@@ -3,6 +3,11 @@
 
 USE javatravel_db;
 
+-- Ajustar tabla de rutas para soportar fecha y hora si aún no existen
+ALTER TABLE rutas 
+    ADD COLUMN IF NOT EXISTS fecha DATE NOT NULL DEFAULT (CURDATE()),
+    ADD COLUMN IF NOT EXISTS hora_salida TIME NOT NULL DEFAULT '08:00:00';
+
 -- Limpiar datos existentes (opcional, comentar si no se desea)
 -- DELETE FROM boletos;
 -- DELETE FROM viajes;
@@ -20,20 +25,20 @@ INSERT INTO buses (placa, marca, tipo_bus, capacidad) VALUES
 ('MNO-678', 'Scania', 'DOS_PISOS', 58),
 ('PQR-901', 'Mercedes Benz', 'ESTANDAR', 38);
 
--- Insertar Rutas
-INSERT INTO rutas (origen, destino, precio_base, duracion_horas) VALUES
-('Lima', 'Arequipa', 80.00, 12),
-('Lima', 'Trujillo', 50.00, 8),
-('Lima', 'Cusco', 100.00, 20),
-('Lima', 'Chiclayo', 60.00, 10),
-('Lima', 'Piura', 70.00, 12),
-('Arequipa', 'Lima', 80.00, 12),
-('Arequipa', 'Cusco', 70.00, 10),
-('Trujillo', 'Lima', 50.00, 8),
-('Trujillo', 'Chiclayo', 30.00, 4),
-('Cusco', 'Lima', 100.00, 20),
-('Cusco', 'Arequipa', 70.00, 10),
-('Chiclayo', 'Lima', 60.00, 10);
+-- Insertar Rutas (se usa CURDATE() como fecha base y horas de referencia)
+INSERT INTO rutas (origen, destino, precio_base, duracion_horas, fecha, hora_salida) VALUES
+('Lima', 'Arequipa', 80.00, 12, CURDATE(), '08:00:00'),
+('Lima', 'Trujillo', 50.00, 8, CURDATE(), '10:00:00'),
+('Lima', 'Cusco', 100.00, 20, CURDATE(), '20:00:00'),
+('Lima', 'Chiclayo', 60.00, 10, CURDATE(), '06:00:00'),
+('Lima', 'Piura', 70.00, 12, CURDATE(), '16:00:00'),
+('Arequipa', 'Lima', 80.00, 12, CURDATE(), '08:00:00'),
+('Arequipa', 'Cusco', 70.00, 10, CURDATE(), '10:00:00'),
+('Trujillo', 'Lima', 50.00, 8, CURDATE(), '14:00:00'),
+('Trujillo', 'Chiclayo', 30.00, 4, CURDATE(), '18:00:00'),
+('Cusco', 'Lima', 100.00, 20, CURDATE(), '07:00:00'),
+('Cusco', 'Arequipa', 70.00, 10, CURDATE(), '09:00:00'),
+('Chiclayo', 'Lima', 60.00, 10, CURDATE(), '21:00:00');
 
 -- Insertar Viajes (para hoy, mañana y pasado mañana)
 INSERT INTO viajes (id_bus, id_ruta, fecha_salida, hora_salida) VALUES

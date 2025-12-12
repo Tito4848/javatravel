@@ -5,7 +5,9 @@ import com.javatravel.dao.*;
 import com.javatravel.model.*;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.List;
 import java.util.Set;
 
 public class SeleccionAsientosFrame extends JFrame {
@@ -18,9 +20,13 @@ public class SeleccionAsientosFrame extends JFrame {
     private CalculadoraPrecio calculadora;
     private JFrame parent;
     private JLabel lblPrecio;
+    private JLabel lblDetallePrecio;
+    private JLabel lblCategoriaPasajero;
     private JSpinner spnEdad;
     private JTextField txtDni;
     private JTextField txtNombre;
+    private JTable tablaPasajeros;
+    private DefaultTableModel modeloPasajeros;
     
     public SeleccionAsientosFrame(JFrame parent, Viaje viaje) {
         this.parent = parent;
@@ -54,6 +60,20 @@ public class SeleccionAsientosFrame extends JFrame {
         panelAsientos.setBorder(BorderFactory.createTitledBorder(
             BorderFactory.createTitledBorder("Vista Gráfica del Bus - Seleccione un Asiento")));
         panelAsientos.setBackground(new Color(240, 240, 240));
+        
+        // Panel de listado de pasajeros de este viaje
+        modeloPasajeros = new DefaultTableModel(new String[]{"Pasajero", "DNI", "Asiento", "Tipo"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        tablaPasajeros = new JTable(modeloPasajeros);
+        JScrollPane scrollPasajeros = new JScrollPane(tablaPasajeros);
+        scrollPasajeros.setPreferredSize(new Dimension(0, 180));
+        JPanel panelPasajeros = new JPanel(new BorderLayout());
+        panelPasajeros.setBorder(BorderFactory.createTitledBorder("Pasajeros y asientos ocupados"));
+        panelPasajeros.add(scrollPasajeros, BorderLayout.CENTER);
         
         // Leyenda mejorada
         JPanel panelLeyenda = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
@@ -124,7 +144,10 @@ public class SeleccionAsientosFrame extends JFrame {
                 if (pasajero != null) {
                     txtNombre.setText(pasajero.getNombre());
                     spnEdad.setValue(pasajero.getEdad());
-                    actualizarPrecio(lblPrecio, (Integer) spnEdad.getValue());
+                    actualizarCategoriaPasajero(pasajero.getEdad());
+                    if (asientoSeleccionado != null) {
+                        actualizarPrecio(lblPrecio, pasajero.getEdad());
+                    }
                     JOptionPane.showMessageDialog(this, 
                         "Pasajero encontrado:\n" + pasajero.getNombre(),
                         "Búsqueda Exitosa",
@@ -161,11 +184,21 @@ public class SeleccionAsientosFrame extends JFrame {
         spnEdad.setPreferredSize(new Dimension(0, 30));
         spnEdad.setFont(new Font("Arial", Font.PLAIN, 11));
         spnEdad.addChangeListener(e -> {
+            int edad = (Integer) spnEdad.getValue();
+            actualizarCategoriaPasajero(edad);
             if (asientoSeleccionado != null) {
-                actualizarPrecio(lblPrecio, (Integer) spnEdad.getValue());
+                actualizarPrecio(lblPrecio, edad);
             }
         });
         panelEdad.add(spnEdad, BorderLayout.CENTER);
+        
+        // Etiqueta de categoría del pasajero
+        JPanel panelCategoria = new JPanel(new BorderLayout(10, 5));
+        panelCategoria.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        lblCategoriaPasajero = new JLabel("Categoría: Adulto", JLabel.LEFT);
+        lblCategoriaPasajero.setFont(new Font("Arial", Font.BOLD, 12));
+        lblCategoriaPasajero.setForeground(new Color(0, 100, 200));
+        panelCategoria.add(lblCategoriaPasajero, BorderLayout.CENTER);
         
         // Panel de Precio (destacado)
         JPanel panelPrecio = new JPanel(new BorderLayout(10, 5));
@@ -179,13 +212,22 @@ public class SeleccionAsientosFrame extends JFrame {
         lblPrecio.setForeground(new Color(0, 100, 0));
         lblPrecio.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         panelPrecio.add(lblPrecio, BorderLayout.CENTER);
+
+        lblDetallePrecio = new JLabel("Seleccione asiento para ver recargos/descuentos", JLabel.CENTER);
+        lblDetallePrecio.setFont(new Font("Arial", Font.PLAIN, 11));
+        lblDetallePrecio.setForeground(new Color(60, 60, 60));
+        panelPrecio.add(lblDetallePrecio, BorderLayout.SOUTH);
         
         // Agregar componentes al panel principal
         panelPasajero.add(panelDni);
         panelPasajero.add(panelNombre);
         panelPasajero.add(panelEdad);
+        panelPasajero.add(panelCategoria);
         panelPasajero.add(Box.createVerticalStrut(10));
         panelPasajero.add(panelPrecio);
+        
+        // Inicializar categoría del pasajero con la edad por defecto
+        actualizarCategoriaPasajero((Integer) spnEdad.getValue());
         
         // Botones de acción - DISEÑO MEJORADO
         JPanel panelBotones = new JPanel(new GridLayout(2, 1, 5, 5));
@@ -259,8 +301,12 @@ public class SeleccionAsientosFrame extends JFrame {
         lblNota.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
         panelInferior.add(lblNota, BorderLayout.SOUTH);
         
+        JPanel panelCentro = new JPanel(new BorderLayout(0, 10));
+        panelCentro.add(panelAsientos, BorderLayout.CENTER);
+        panelCentro.add(panelPasajeros, BorderLayout.SOUTH);
+        
         mainPanel.add(panelInfo, BorderLayout.NORTH);
-        mainPanel.add(panelAsientos, BorderLayout.CENTER);
+        mainPanel.add(panelCentro, BorderLayout.CENTER);
         mainPanel.add(panelInferior, BorderLayout.SOUTH);
         mainPanel.add(panelDerecho, BorderLayout.EAST);
         
@@ -430,6 +476,8 @@ public class SeleccionAsientosFrame extends JFrame {
         
         panelAsientos.revalidate();
         panelAsientos.repaint();
+        
+        cargarPasajeros();
     }
     
     private void resetearBotones() {
@@ -449,9 +497,55 @@ public class SeleccionAsientosFrame extends JFrame {
         }
     }
     
+    private void cargarPasajeros() {
+        if (modeloPasajeros == null) return;
+        
+        modeloPasajeros.setRowCount(0);
+        List<Boleto> boletos = boletoDAO.listarPorViaje(viaje.getId());
+        boolean esBusDosPisos = viaje.getVehiculo() instanceof BusDosPisos;
+        BusDosPisos busDosPisos = esBusDosPisos ? (BusDosPisos) viaje.getVehiculo() : null;
+        
+        for (Boleto boleto : boletos) {
+            Pasajero pasajero = boleto.getPasajero();
+            String tipo = "NORMAL";
+            if (esBusDosPisos && busDosPisos != null && busDosPisos.esAsientoVIP(boleto.getAsiento())) {
+                tipo = "VIP";
+            }
+            
+            modeloPasajeros.addRow(new Object[]{
+                pasajero != null ? pasajero.getNombre() : "N/D",
+                pasajero != null ? pasajero.getDni() : "",
+                boleto.getAsiento(),
+                tipo
+            });
+        }
+    }
+    
+    private void actualizarCategoriaPasajero(int edad) {
+        if (lblCategoriaPasajero == null) return;
+        
+        String categoria;
+        Color color;
+        
+        if (edad < 18) {
+            categoria = "Menor de Edad (Descuento 15%)";
+            color = new Color(200, 100, 0); // Naranja
+        } else if (edad >= 65) {
+            categoria = "Adulto Mayor (Descuento 20%)";
+            color = new Color(0, 150, 0); // Verde
+        } else {
+            categoria = "Adulto";
+            color = new Color(0, 100, 200); // Azul
+        }
+        
+        lblCategoriaPasajero.setText("Categoría: " + categoria);
+        lblCategoriaPasajero.setForeground(color);
+    }
+    
     private void actualizarPrecio(JLabel lblPrecio, int edad) {
         if (asientoSeleccionado == null) {
             lblPrecio.setText("Precio: S/. 0.00");
+            lblDetallePrecio.setText("Seleccione asiento para ver recargos/descuentos");
             return;
         }
         
@@ -468,6 +562,18 @@ public class SeleccionAsientosFrame extends JFrame {
         double precioBase = viaje.getRuta().getPrecioBase();
         double precioFinal = calculadora.calcularPrecioFinal(precioBase, tipoAsiento, edad);
         lblPrecio.setText(String.format("Precio: S/. %.2f", precioFinal));
+        
+        StringBuilder detalle = new StringBuilder();
+        detalle.append(String.format("Base S/. %.2f", precioBase));
+        if ("VIP".equals(tipoAsiento)) {
+            detalle.append(" +20% VIP");
+        }
+        if (edad < 18) {
+            detalle.append(" -15% menor");
+        } else if (edad >= 65) {
+            detalle.append(" -20% adulto mayor");
+        }
+        lblDetallePrecio.setText(detalle.toString());
     }
     
     private void confirmarVenta(String dni, String nombre, int edad, JLabel lblPrecio) {
