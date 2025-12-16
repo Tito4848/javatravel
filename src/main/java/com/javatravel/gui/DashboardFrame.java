@@ -20,7 +20,7 @@ public class DashboardFrame extends JFrame {
         viajeDAO = new ViajeDAO();
         initComponents();
         
-        // Cargar datos después de que la ventana esté visible
+        
         SwingUtilities.invokeLater(() -> {
             cargarDatos();
         });
@@ -35,7 +35,7 @@ public class DashboardFrame extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         
-        // Panel superior - Total de ventas
+        
         JPanel panelVentas = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelVentas.setBorder(BorderFactory.createTitledBorder("Ventas del Día"));
         panelVentas.setPreferredSize(new Dimension(0, 100));
@@ -45,7 +45,7 @@ public class DashboardFrame extends JFrame {
         lblTotalVentas.setForeground(new Color(0, 128, 0));
         panelVentas.add(lblTotalVentas);
         
-        // Panel central - Próximos viajes
+        
         panelProximosViajes = new JPanel();
         panelProximosViajes.setBorder(BorderFactory.createTitledBorder("Próximos 3 Buses por Salir"));
         panelProximosViajes.setLayout(new BoxLayout(panelProximosViajes, BoxLayout.Y_AXIS));
@@ -53,7 +53,7 @@ public class DashboardFrame extends JFrame {
         JScrollPane scrollViajes = new JScrollPane(panelProximosViajes);
         scrollViajes.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         
-        // Panel inferior - Botones de acceso rápido
+        
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         
         JButton btnNuevaVenta = new JButton("Nueva Venta");
@@ -102,12 +102,12 @@ public class DashboardFrame extends JFrame {
         try {
             System.out.println("Cargando datos del dashboard...");
             
-            // Cargar total de ventas
+            
             double totalVentas = boletoDAO.obtenerTotalVentasDelDia();
             System.out.println("Total ventas del día: S/. " + totalVentas);
             lblTotalVentas.setText(String.format("S/. %.2f", totalVentas));
             
-            // Cargar próximos viajes
+            
             panelProximosViajes.removeAll();
             List<Viaje> proximosViajes = viajeDAO.obtenerProximosViajes(3);
             System.out.println("Viajes encontrados: " + proximosViajes.size());
@@ -146,7 +146,7 @@ public class DashboardFrame extends JFrame {
         ));
         panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
         
-        // Calcular asientos libres
+        
         BoletoDAO boletoDAO = new BoletoDAO();
         int capacidad = viaje.getVehiculo().getCapacidad();
         int ocupados = boletoDAO.obtenerAsientosOcupados(viaje.getId()).size();
@@ -169,7 +169,7 @@ public class DashboardFrame extends JFrame {
         JLabel lblInfo = new JLabel(info);
         lblInfo.setFont(new Font("Arial", Font.PLAIN, 12));
         
-        // Alerta visual si quedan menos de 5 asientos
+        
         if (libres < 5 && libres > 0) {
             panel.setBackground(new Color(255, 255, 200));
             JLabel lblAlerta = new JLabel("POCOS ASIENTOS", JLabel.RIGHT);

@@ -32,7 +32,7 @@ public class GestionRutasFrame extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        // Tabla
+        
         String[] columnas = {"ID", "Origen", "Destino", "Precio Base", "Duración (horas)", "Fecha", "Hora"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override
@@ -43,7 +43,7 @@ public class GestionRutasFrame extends JFrame {
         tablaRutas = new JTable(modeloTabla);
         JScrollPane scrollTabla = new JScrollPane(tablaRutas);
         
-        // Panel de botones
+        
         JPanel panelBotones = new JPanel(new FlowLayout());
         
         JButton btnNuevo = new JButton("Nueva Ruta");
@@ -106,7 +106,7 @@ public class GestionRutasFrame extends JFrame {
         JSpinner spnPrecio = new JSpinner(new SpinnerNumberModel(50.0, 10.0, 1000.0, 5.0));
         JSpinner spnDuracion = new JSpinner(new SpinnerNumberModel(4, 1, 24, 1));
         
-        // Fecha sugerida para la ruta
+        
         Calendar calFecha = Calendar.getInstance();
         calFecha.set(Calendar.HOUR_OF_DAY, 0);
         calFecha.set(Calendar.MINUTE, 0);
@@ -116,7 +116,7 @@ public class GestionRutasFrame extends JFrame {
         JSpinner.DateEditor editorFecha = new JSpinner.DateEditor(spnFecha, "dd/MM/yyyy");
         spnFecha.setEditor(editorFecha);
         
-        // Hora sugerida de salida
+        
         Calendar calHora = Calendar.getInstance();
         calHora.set(Calendar.HOUR_OF_DAY, 8);
         calHora.set(Calendar.MINUTE, 0);
@@ -304,7 +304,7 @@ public class GestionRutasFrame extends JFrame {
             return;
         }
 
-        // Abrir Gestión de Viajes con la ruta preseleccionada
+        
         GestionViajesFrame viajesFrame = new GestionViajesFrame(this);
         viajesFrame.setVisible(true);
         viajesFrame.programarViajeParaRuta(ruta);

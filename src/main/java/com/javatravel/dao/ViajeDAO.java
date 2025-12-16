@@ -17,7 +17,7 @@ public class ViajeDAO implements IGuardable<Viaje> {
     
     @Override
     public boolean guardar(Viaje viaje) {
-        // Validar que no haya solapamiento de horarios
+        
         if (tieneSolapamiento(viaje)) {
             throw new RuntimeException("El bus ya está asignado a otro viaje en ese horario");
         }
@@ -47,7 +47,7 @@ public class ViajeDAO implements IGuardable<Viaje> {
     
     @Override
     public boolean actualizar(Viaje viaje) {
-        // Validar que no haya solapamiento de horarios al actualizar
+        
         if (tieneSolapamiento(viaje)) {
             throw new RuntimeException("El bus ya está asignado a otro viaje en ese horario");
         }
@@ -196,7 +196,7 @@ public class ViajeDAO implements IGuardable<Viaje> {
     }
     
     private boolean tieneSolapamiento(Viaje nuevoViaje) {
-        // Obtener duración de la ruta del nuevo viaje
+        
         Ruta ruta = rutaDAO.buscarPorId(nuevoViaje.getIdRuta());
         if (ruta == null) return false;
         

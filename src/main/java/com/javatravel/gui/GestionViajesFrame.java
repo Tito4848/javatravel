@@ -42,7 +42,7 @@ public class GestionViajesFrame extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        // Tabla
+        
         String[] columnas = {"ID", "Ruta", "Bus", "Fecha", "Hora", "Tipo Bus"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override
@@ -53,7 +53,7 @@ public class GestionViajesFrame extends JFrame {
         tablaViajes = new JTable(modeloTabla);
         JScrollPane scrollTabla = new JScrollPane(tablaViajes);
         
-        // Panel de botones
+        
         JPanel panelBotones = new JPanel(new FlowLayout());
         
         JButton btnNuevo = new JButton("Nuevo Viaje");
@@ -99,7 +99,7 @@ public class GestionViajesFrame extends JFrame {
     }
     
     public void programarViajeParaRuta(Ruta rutaPreseleccionada) {
-        // Permite invocar desde Gestión de Rutas con la ruta ya elegida
+        
         mostrarDialogoNuevoViaje(rutaPreseleccionada);
     }
 
@@ -111,14 +111,14 @@ public class GestionViajesFrame extends JFrame {
         JPanel panel = new JPanel(new GridLayout(5, 2, 5, 5));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        // Combo de buses
+        
         JComboBox<Vehiculo> cmbBus = new JComboBox<>();
         List<Vehiculo> buses = busDAO.listarTodos();
         for (Vehiculo bus : buses) {
             cmbBus.addItem(bus);
         }
         
-        // Combo de rutas
+        
         JComboBox<Ruta> cmbRuta = new JComboBox<>();
         List<Ruta> rutas = rutaDAO.listarTodos();
         Ruta rutaSeleccionada = null;
@@ -132,7 +132,7 @@ public class GestionViajesFrame extends JFrame {
             cmbRuta.setSelectedItem(rutaSeleccionada);
         }
         
-        // Fecha
+        
         Calendar calFecha = Calendar.getInstance();
         calFecha.set(Calendar.HOUR_OF_DAY, 0);
         calFecha.set(Calendar.MINUTE, 0);
@@ -142,7 +142,7 @@ public class GestionViajesFrame extends JFrame {
         JSpinner.DateEditor editorFecha = new JSpinner.DateEditor(spnFecha, "dd/MM/yyyy");
         spnFecha.setEditor(editorFecha);
         
-        // Hora
+        
         Calendar calHora = Calendar.getInstance();
         calHora.set(Calendar.HOUR_OF_DAY, 8);
         calHora.set(Calendar.MINUTE, 0);
@@ -231,7 +231,7 @@ public class GestionViajesFrame extends JFrame {
         JPanel panel = new JPanel(new GridLayout(5, 2, 5, 5));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        // Combo de buses
+        
         JComboBox<Vehiculo> cmbBus = new JComboBox<>();
         List<Vehiculo> buses = busDAO.listarTodos();
         Vehiculo busSeleccionado = null;
@@ -245,7 +245,7 @@ public class GestionViajesFrame extends JFrame {
             cmbBus.setSelectedItem(busSeleccionado);
         }
         
-        // Combo de rutas
+        
         JComboBox<Ruta> cmbRuta = new JComboBox<>();
         List<Ruta> rutas = rutaDAO.listarTodos();
         Ruta rutaSeleccionada = null;
@@ -259,7 +259,7 @@ public class GestionViajesFrame extends JFrame {
             cmbRuta.setSelectedItem(rutaSeleccionada);
         }
         
-        // Fecha
+        
         Calendar calFecha = Calendar.getInstance();
         calFecha.set(viaje.getFechaSalida().getYear(), viaje.getFechaSalida().getMonthValue() - 1, viaje.getFechaSalida().getDayOfMonth());
         calFecha.set(Calendar.HOUR_OF_DAY, 0);
@@ -270,7 +270,7 @@ public class GestionViajesFrame extends JFrame {
         JSpinner.DateEditor editorFecha = new JSpinner.DateEditor(spnFecha, "dd/MM/yyyy");
         spnFecha.setEditor(editorFecha);
         
-        // Hora
+        
         Calendar calHora = Calendar.getInstance();
         calHora.set(Calendar.HOUR_OF_DAY, viaje.getHoraSalida().getHour());
         calHora.set(Calendar.MINUTE, viaje.getHoraSalida().getMinute());

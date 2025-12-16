@@ -8,19 +8,19 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        // Configurar Look and Feel del sistema
+        
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
         }
         
-        // Inicializar datos de prueba si no existen
+        
         System.out.println("========================================");
         System.out.println("  JavaTravel - Sistema de Gestión");
         System.out.println("========================================");
         
-        // Verificar y actualizar esquema de base de datos
+        
         System.out.println("Verificando esquema de base de datos...");
         try {
             DatabaseMigration.verificarYActualizarEsquema();
@@ -29,7 +29,7 @@ public class Main {
             System.err.println("La aplicación continuará, pero puede haber errores si falta la columna tipo_asiento");
         }
         
-        System.out.println("Verificando datos de prueba...");
+        System.out.println("Verificando datos de prueba");
         try {
             DataInitializer.inicializarDatos();
         } catch (Exception e) {
@@ -45,7 +45,7 @@ public class Main {
             System.exit(1);
         }
         
-        // Ejecutar aplicación
+        
         SwingUtilities.invokeLater(() -> {
             try {
                 DashboardFrame dashboard = new DashboardFrame();

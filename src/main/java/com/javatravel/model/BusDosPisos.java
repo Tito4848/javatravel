@@ -1,8 +1,8 @@
 package com.javatravel.model;
 
 public class BusDosPisos extends Vehiculo {
-    private int capacidadPiso1; // VIP
-    private int capacidadPiso2; // Normal
+    private int capacidadPiso1; 
+    private int capacidadPiso2; 
     
     public BusDosPisos() {
         super();
@@ -10,7 +10,7 @@ public class BusDosPisos extends Vehiculo {
     
     public BusDosPisos(String placa, String marca, int capacidad) {
         super(placa, marca, capacidad);
-        // Distribución típica: 60% piso 1 (VIP), 40% piso 2 (Normal)
+        
         this.capacidadPiso1 = (int) (capacidad * 0.6);
         this.capacidadPiso2 = capacidad - capacidadPiso1;
     }
@@ -29,7 +29,7 @@ public class BusDosPisos extends Vehiculo {
     
     @Override
     public int[][] getDistribucionAsientos() {
-        // Piso 1: 4 columnas, Piso 2: 4 columnas
+        
         int filasPiso1 = (int) Math.ceil(capacidadPiso1 / 4.0);
         int filasPiso2 = (int) Math.ceil(capacidadPiso2 / 4.0);
         return new int[filasPiso1 + filasPiso2][4];
@@ -52,7 +52,7 @@ public class BusDosPisos extends Vehiculo {
     }
     
     public boolean esAsientoVIP(String codigoAsiento) {
-        // Asientos VIP son del piso 1 (A1-A30, B1-B30, etc.)
+        
         try {
             if (codigoAsiento == null || codigoAsiento.length() < 2) {
                 return false;

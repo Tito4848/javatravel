@@ -30,7 +30,7 @@ public class GestionPasajerosFrame extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        // Tabla
+        
         String[] columnas = {"ID", "DNI", "Nombre", "Edad", "Tipo"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override
@@ -41,7 +41,7 @@ public class GestionPasajerosFrame extends JFrame {
         tablaPasajeros = new JTable(modeloTabla);
         JScrollPane scrollTabla = new JScrollPane(tablaPasajeros);
         
-        // Panel de botones
+        
         JPanel panelBotones = new JPanel(new FlowLayout());
         
         JButton btnNuevo = new JButton("Nuevo Pasajero");
@@ -188,7 +188,7 @@ public class GestionPasajerosFrame extends JFrame {
             panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             
             JTextField txtDni = new JTextField(pasajero.getDni());
-            txtDni.setEditable(false); // DNI no se puede cambiar
+            txtDni.setEditable(false); 
             JTextField txtNombre = new JTextField(pasajero.getNombre());
             JSpinner spnEdad = new JSpinner(new SpinnerNumberModel(pasajero.getEdad(), 1, 120, 1));
             
@@ -273,7 +273,7 @@ public class GestionPasajerosFrame extends JFrame {
         if (dni != null && !dni.trim().isEmpty()) {
             Pasajero pasajero = pasajeroDAO.buscarPorDni(dni.trim());
             if (pasajero != null) {
-                // Seleccionar la fila en la tabla
+                
                 for (int i = 0; i < modeloTabla.getRowCount(); i++) {
                     if (modeloTabla.getValueAt(i, 0).equals(pasajero.getId())) {
                         tablaPasajeros.setRowSelectionInterval(i, i);

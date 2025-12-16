@@ -77,7 +77,7 @@ INSERT INTO pasajeros (dni, nombre, edad) VALUES
 ('77889900', 'Diego Morales Castro', 40),
 ('88990011', 'Patricia Castro Ruiz', 22);
 
--- Insertar Boletos de ejemplo (algunos asientos ocupados para mostrar en el mapa)
+
 INSERT INTO boletos (id_viaje, id_pasajero, asiento, precio_final, fecha_compra) VALUES
 -- Viaje 1 (Lima-Arequipa, hoy 08:00) - Algunos asientos ocupados
 (1, 1, 'A1', 80.00, NOW()),

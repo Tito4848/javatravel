@@ -36,7 +36,7 @@ public class VentaPasajesFrame extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        // Panel de búsqueda
+        
         JPanel panelBusqueda = new JPanel(new GridLayout(2, 4, 5, 5));
         panelBusqueda.setBorder(BorderFactory.createTitledBorder("Buscar Viajes"));
         
@@ -63,7 +63,7 @@ public class VentaPasajesFrame extends JFrame {
         btnBuscar.addActionListener(e -> buscarViajes());
         panelBusqueda.add(btnBuscar);
         
-        // Tabla de viajes
+        
         String[] columnas = {"ID", "Ruta", "Hora", "Bus", "Tipo", "Precio Base", "Asientos Libres"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override
@@ -84,7 +84,7 @@ public class VentaPasajesFrame extends JFrame {
         
         JScrollPane scrollTabla = new JScrollPane(tablaViajes);
         
-        // Panel de botones
+        
         JPanel panelBotones = new JPanel(new FlowLayout());
         JButton btnSeleccionar = new JButton("Seleccionar Viaje y Asiento");
         btnSeleccionar.addActionListener(e -> abrirSeleccionAsientos());
@@ -118,7 +118,7 @@ public class VentaPasajesFrame extends JFrame {
             cmbOrigen.removeAllItems();
             cmbDestino.removeAllItems();
             
-            // Ordenar alfabéticamente
+            
             java.util.List<String> origenesList = new java.util.ArrayList<>(origenes);
             java.util.List<String> destinosList = new java.util.ArrayList<>(destinos);
             java.util.Collections.sort(origenesList);

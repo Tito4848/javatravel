@@ -18,12 +18,11 @@ public class BoletoDAO implements IGuardable<Boleto> {
     
     @Override
     public boolean guardar(Boleto boleto) {
-        // Validar que el asiento no esté ocupado
+        
         if (asientoOcupado(boleto.getIdViaje(), boleto.getAsiento())) {
             throw new RuntimeException("El asiento " + boleto.getAsiento() + " ya está ocupado");
         }
         
-        // Verificar si la columna tipo_asiento existe
         boolean tieneTipoAsiento = verificarColumnaTipoAsiento();
         String sql;
         
@@ -209,7 +208,7 @@ public class BoletoDAO implements IGuardable<Boleto> {
                 tipoAsiento = "NORMAL";
             }
         } catch (SQLException e) {
-            // Si la columna no existe, usar NORMAL por defecto
+            
             tipoAsiento = "NORMAL";
         }
         
@@ -248,10 +247,7 @@ public class BoletoDAO implements IGuardable<Boleto> {
         return false;
     }
     
-    /**
-     * Verifica si la columna tipo_asiento existe en la tabla boletos
-     * Cachea el resultado para evitar múltiples consultas
-     */
+    
     private static Boolean tieneColumnaTipoAsiento = null;
     
     private boolean verificarColumnaTipoAsiento() {
@@ -265,7 +261,7 @@ public class BoletoDAO implements IGuardable<Boleto> {
             tieneColumnaTipoAsiento = rs.next();
             rs.close();
         } catch (SQLException e) {
-            // Si hay error, asumir que no existe
+            
             tieneColumnaTipoAsiento = false;
         }
         

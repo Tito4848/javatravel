@@ -7,7 +7,7 @@ public class Boleto {
     private int idViaje;
     private int idPasajero;
     private String asiento;
-    private String tipoAsiento; // VIP o NORMAL
+    private String tipoAsiento; 
     private double precioFinal;
     private LocalDateTime fechaCompra;
     private Viaje viaje;

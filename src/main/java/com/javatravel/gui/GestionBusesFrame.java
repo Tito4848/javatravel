@@ -32,7 +32,7 @@ public class GestionBusesFrame extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        // Tabla
+        
         String[] columnas = {"ID", "Placa", "Marca", "Tipo", "Capacidad"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override
@@ -43,7 +43,7 @@ public class GestionBusesFrame extends JFrame {
         tablaBuses = new JTable(modeloTabla);
         JScrollPane scrollTabla = new JScrollPane(tablaBuses);
         
-        // Panel de botones
+        
         JPanel panelBotones = new JPanel(new FlowLayout());
         
         JButton btnNuevo = new JButton("Nuevo Bus");

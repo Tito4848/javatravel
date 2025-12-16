@@ -22,7 +22,7 @@ public class BusEstandar extends Vehiculo {
     
     @Override
     public int[][] getDistribucionAsientos() {
-        // Distribución típica: 4 columnas, filas según capacidad
+        
         int filas = (int) Math.ceil(capacidad / 4.0);
         return new int[filas][4];
     }

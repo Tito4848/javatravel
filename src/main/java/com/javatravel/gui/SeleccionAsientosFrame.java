@@ -47,7 +47,6 @@ public class SeleccionAsientosFrame extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        // Información del viaje
         JPanel panelInfo = new JPanel(new GridLayout(2, 2, 5, 5));
         panelInfo.setBorder(BorderFactory.createTitledBorder("Información del Viaje"));
         panelInfo.add(new JLabel("Ruta: " + viaje.getRuta().toString()));
@@ -55,13 +54,11 @@ public class SeleccionAsientosFrame extends JFrame {
         panelInfo.add(new JLabel("Fecha: " + viaje.getFechaSalida()));
         panelInfo.add(new JLabel("Hora: " + viaje.getHoraSalida()));
         
-        // Panel de asientos - REPRESENTACIÓN GRÁFICA DEL BUS
         panelAsientos = new JPanel();
         panelAsientos.setBorder(BorderFactory.createTitledBorder(
             BorderFactory.createTitledBorder("Vista Gráfica del Bus - Seleccione un Asiento")));
         panelAsientos.setBackground(new Color(240, 240, 240));
         
-        // Panel de listado de pasajeros de este viaje
         modeloPasajeros = new DefaultTableModel(new String[]{"Pasajero", "DNI", "Asiento", "Tipo"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -75,11 +72,10 @@ public class SeleccionAsientosFrame extends JFrame {
         panelPasajeros.setBorder(BorderFactory.createTitledBorder("Pasajeros y asientos ocupados"));
         panelPasajeros.add(scrollPasajeros, BorderLayout.CENTER);
         
-        // Leyenda mejorada
+        
         JPanel panelLeyenda = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
         panelLeyenda.setBorder(BorderFactory.createTitledBorder("Leyenda de Estados"));
         
-        // Disponible
         JPanel panelVerde = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         JButton btnEjemploVerde = new JButton("  ");
         btnEjemploVerde.setBackground(Color.GREEN);
@@ -88,7 +84,6 @@ public class SeleccionAsientosFrame extends JFrame {
         panelVerde.add(btnEjemploVerde);
         panelVerde.add(new JLabel("Disponible"));
         
-        // Ocupado
         JPanel panelRojo = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         JButton btnEjemploRojo = new JButton("  ");
         btnEjemploRojo.setBackground(Color.RED);
@@ -97,7 +92,6 @@ public class SeleccionAsientosFrame extends JFrame {
         panelRojo.add(btnEjemploRojo);
         panelRojo.add(new JLabel("Ocupado"));
         
-        // Seleccionado
         JPanel panelAmarillo = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         JButton btnEjemploAmarillo = new JButton("  ");
         btnEjemploAmarillo.setBackground(Color.YELLOW);
@@ -110,7 +104,7 @@ public class SeleccionAsientosFrame extends JFrame {
         panelLeyenda.add(panelRojo);
         panelLeyenda.add(panelAmarillo);
         
-        // Panel de pasajero y confirmación - DISEÑO MEJORADO
+        
         JPanel panelPasajero = new JPanel();
         panelPasajero.setBorder(BorderFactory.createTitledBorder(
             BorderFactory.createEtchedBorder(), 
@@ -121,7 +115,7 @@ public class SeleccionAsientosFrame extends JFrame {
         panelPasajero.setLayout(new BoxLayout(panelPasajero, BoxLayout.Y_AXIS));
         panelPasajero.setPreferredSize(new Dimension(300, 0));
         
-        // Campo DNI con búsqueda
+        
         JPanel panelDni = new JPanel(new BorderLayout(10, 5));
         panelDni.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         JLabel lblDni = new JLabel("DNI:");
@@ -163,7 +157,6 @@ public class SeleccionAsientosFrame extends JFrame {
         panelDniInput.add(btnBuscarDni, BorderLayout.EAST);
         panelDni.add(panelDniInput, BorderLayout.CENTER);
         
-        // Campo Nombre
         JPanel panelNombre = new JPanel(new BorderLayout(10, 5));
         panelNombre.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         JLabel lblNombre = new JLabel("Nombre Completo:");
@@ -174,7 +167,6 @@ public class SeleccionAsientosFrame extends JFrame {
         txtNombre.setFont(new Font("Arial", Font.PLAIN, 11));
         panelNombre.add(txtNombre, BorderLayout.CENTER);
         
-        // Campo Edad
         JPanel panelEdad = new JPanel(new BorderLayout(10, 5));
         panelEdad.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         JLabel lblEdad = new JLabel("Edad:");
@@ -192,7 +184,6 @@ public class SeleccionAsientosFrame extends JFrame {
         });
         panelEdad.add(spnEdad, BorderLayout.CENTER);
         
-        // Etiqueta de categoría del pasajero
         JPanel panelCategoria = new JPanel(new BorderLayout(10, 5));
         panelCategoria.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         lblCategoriaPasajero = new JLabel("Categoría: Adulto", JLabel.LEFT);
@@ -200,7 +191,6 @@ public class SeleccionAsientosFrame extends JFrame {
         lblCategoriaPasajero.setForeground(new Color(0, 100, 200));
         panelCategoria.add(lblCategoriaPasajero, BorderLayout.CENTER);
         
-        // Panel de Precio (destacado)
         JPanel panelPrecio = new JPanel(new BorderLayout(10, 5));
         panelPrecio.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createTitledBorder("Precio Final"),
@@ -218,7 +208,6 @@ public class SeleccionAsientosFrame extends JFrame {
         lblDetallePrecio.setForeground(new Color(60, 60, 60));
         panelPrecio.add(lblDetallePrecio, BorderLayout.SOUTH);
         
-        // Agregar componentes al panel principal
         panelPasajero.add(panelDni);
         panelPasajero.add(panelNombre);
         panelPasajero.add(panelEdad);
@@ -226,10 +215,8 @@ public class SeleccionAsientosFrame extends JFrame {
         panelPasajero.add(Box.createVerticalStrut(10));
         panelPasajero.add(panelPrecio);
         
-        // Inicializar categoría del pasajero con la edad por defecto
         actualizarCategoriaPasajero((Integer) spnEdad.getValue());
         
-        // Botones de acción - DISEÑO MEJORADO
         JPanel panelBotones = new JPanel(new GridLayout(2, 1, 5, 5));
         panelBotones.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
@@ -281,13 +268,13 @@ public class SeleccionAsientosFrame extends JFrame {
         panelBotones.add(btnConfirmar);
         panelBotones.add(btnCancelar);
         
-        // Panel derecho con datos del pasajero y botones
+        
         JPanel panelDerecho = new JPanel(new BorderLayout(0, 10));
         panelDerecho.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
         panelDerecho.add(panelPasajero, BorderLayout.CENTER);
         panelDerecho.add(panelBotones, BorderLayout.SOUTH);
         
-        // Panel inferior con leyenda y nota
+        
         JPanel panelInferior = new JPanel(new BorderLayout());
         panelInferior.add(panelLeyenda, BorderLayout.CENTER);
         
@@ -313,11 +300,7 @@ public class SeleccionAsientosFrame extends JFrame {
         add(mainPanel);
     }
     
-    /**
-     * Método que DIBUJA el bus como una matriz de botones
-     * Representa visualmente la distribución de asientos del vehículo
-     * Para buses de dos pisos, muestra los pisos separados visualmente
-     */
+    
     private void cargarAsientos() {
         Vehiculo vehiculo = viaje.getVehiculo();
         int capacidad = vehiculo.getCapacidad();
@@ -326,7 +309,7 @@ public class SeleccionAsientosFrame extends JFrame {
         panelAsientos.removeAll();
         panelAsientos.setLayout(new BorderLayout());
         
-        // Si es bus de dos pisos, mostrar pisos separados
+        
         if (vehiculo instanceof BusDosPisos) {
             BusDosPisos busDosPisos = (BusDosPisos) vehiculo;
             int capacidadPiso1 = busDosPisos.getCapacidadPiso1();
@@ -335,7 +318,7 @@ public class SeleccionAsientosFrame extends JFrame {
             JPanel panelContenedor = new JPanel();
             panelContenedor.setLayout(new BoxLayout(panelContenedor, BoxLayout.Y_AXIS));
             
-            // PISO 1 - VIP
+            // PISO 1-VIP
             JPanel panelPiso1 = crearPanelPiso("PISO 1 - ASIENTOS VIP", capacidadPiso1, 1, busDosPisos, asientosOcupados);
             panelPiso1.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(new Color(255, 165, 0), 3),
@@ -346,7 +329,7 @@ public class SeleccionAsientosFrame extends JFrame {
                 new Color(255, 140, 0)));
             panelPiso1.setBackground(new Color(255, 250, 240));
             
-            // Separador visual entre pisos
+            
             JPanel panelSeparador = new JPanel();
             panelSeparador.setPreferredSize(new Dimension(0, 20));
             panelSeparador.setBackground(new Color(200, 200, 200));
@@ -355,7 +338,7 @@ public class SeleccionAsientosFrame extends JFrame {
             lblSeparador.setForeground(new Color(100, 100, 100));
             panelSeparador.add(lblSeparador);
             
-            // PISO 2 - NORMAL
+            // PISO 2-NORMAL
             JPanel panelPiso2 = crearPanelPiso("PISO 2 - ASIENTOS NORMALES", capacidadPiso2, capacidadPiso1 + 1, busDosPisos, asientosOcupados);
             panelPiso2.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.BLUE, 2),
@@ -378,7 +361,7 @@ public class SeleccionAsientosFrame extends JFrame {
             
             panelAsientos.add(scrollAsientos, BorderLayout.CENTER);
         } else {
-            // Bus estándar - una sola matriz
+            
             int filas = (int) Math.ceil(capacidad / 4.0);
             int columnas = 4;
             
@@ -399,9 +382,7 @@ public class SeleccionAsientosFrame extends JFrame {
         cargarPasajeros();
     }
     
-    /**
-     * Crea un panel para un piso específico del bus
-     */
+    
     private JPanel crearPanelPiso(String titulo, int capacidadPiso, int inicioContador, BusDosPisos busDosPisos, Set<String> asientosOcupados) {
         int filas = (int) Math.ceil(capacidadPiso / 4.0);
         int columnas = 4;
@@ -409,11 +390,11 @@ public class SeleccionAsientosFrame extends JFrame {
         JPanel panelPiso = new JPanel(new BorderLayout(5, 5));
         panelPiso.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        // Panel con la matriz de asientos
+        
         JPanel panelMatriz = new JPanel(new GridLayout(filas + 1, 6, 5, 5));
         panelMatriz.setBackground(new Color(250, 250, 250));
         
-        // Fila de encabezados
+        
         panelMatriz.add(new JLabel("Fila", JLabel.CENTER));
         panelMatriz.add(new JLabel("A", JLabel.CENTER));
         panelMatriz.add(new JLabel("B", JLabel.CENTER));
@@ -441,7 +422,7 @@ public class SeleccionAsientosFrame extends JFrame {
             }
         }
         
-        // Agregar botones al panel
+        
         for (int i = 0; i < filas; i++) {
             JLabel lblFila = new JLabel(String.valueOf(i + 1), JLabel.CENTER);
             lblFila.setFont(new Font("Arial", Font.BOLD, 11));
@@ -449,7 +430,7 @@ public class SeleccionAsientosFrame extends JFrame {
             
             for (int j = 0; j < columnas; j++) {
                 if (j == 2) {
-                    // Pasillo visual
+                    
                     JLabel lblPasillo = new JLabel("│", JLabel.CENTER);
                     lblPasillo.setFont(new Font("Arial", Font.BOLD, 18));
                     lblPasillo.setForeground(new Color(150, 150, 150));
@@ -468,14 +449,12 @@ public class SeleccionAsientosFrame extends JFrame {
         return panelPiso;
     }
     
-    /**
-     * Crea una matriz de asientos para bus estándar
-     */
+    
     private JPanel crearMatrizAsientos(int capacidad, int filas, int columnas, Vehiculo vehiculo, Set<String> asientosOcupados) {
         JPanel panelMatriz = new JPanel(new GridLayout(filas + 1, 6, 5, 5));
         panelMatriz.setBackground(new Color(240, 240, 240));
         
-        // Fila de encabezados
+        
         panelMatriz.add(new JLabel("Fila", JLabel.CENTER));
         panelMatriz.add(new JLabel("A", JLabel.CENTER));
         panelMatriz.add(new JLabel("B", JLabel.CENTER));
@@ -502,7 +481,7 @@ public class SeleccionAsientosFrame extends JFrame {
             }
         }
         
-        // Agregar botones al panel
+        
         for (int i = 0; i < filas; i++) {
             JLabel lblFila = new JLabel(String.valueOf(i + 1), JLabel.CENTER);
             lblFila.setFont(new Font("Arial", Font.BOLD, 11));
@@ -527,9 +506,7 @@ public class SeleccionAsientosFrame extends JFrame {
         return panelMatriz;
     }
     
-    /**
-     * Crea un botón de asiento con su configuración visual
-     */
+    
     private JButton crearBotonAsiento(String codigoAsiento, String tipoAsiento, Set<String> asientosOcupados) {
         JButton btn = new JButton(codigoAsiento);
         btn.setFont(new Font("Arial", Font.BOLD, 11));
@@ -544,15 +521,15 @@ public class SeleccionAsientosFrame extends JFrame {
             btn.setToolTipText("Asiento Normal" + (viaje.getVehiculo() instanceof BusDosPisos ? " - Segundo Piso" : ""));
         }
         
-        // ESTADO VISUAL DEL ASIENTO
+        
         if (asientosOcupados.contains(codigoAsiento)) {
-            // ROJO: OCUPADO
+            
             btn.setBackground(new Color(220, 20, 20));
             btn.setForeground(Color.WHITE);
             btn.setEnabled(false);
             btn.setToolTipText("OCUPADO - " + btn.getToolTipText());
         } else {
-            // VERDE: DISPONIBLE
+            
             btn.setBackground(new Color(50, 200, 50));
             btn.setForeground(Color.BLACK);
             btn.setEnabled(true);
@@ -590,7 +567,7 @@ public class SeleccionAsientosFrame extends JFrame {
                 if (botonesAsientos[i][j] != null) {
                     String codigo = botonesAsientos[i][j].getText();
                     if (!asientosOcupados.contains(codigo) && botonesAsientos[i][j].isEnabled()) {
-                        // Determinar color según tipo de asiento
+                        
                         Vehiculo vehiculo = viaje.getVehiculo();
                         if (vehiculo instanceof BusDosPisos) {
                             BusDosPisos busDosPisos = (BusDosPisos) vehiculo;
@@ -607,7 +584,7 @@ public class SeleccionAsientosFrame extends JFrame {
             }
         }
         
-        // También resetear botones en paneles de dos pisos si existen
+        
         resetearBotonesEnPanel(panelAsientos);
     }
     
@@ -681,7 +658,7 @@ public class SeleccionAsientosFrame extends JFrame {
             return;
         }
         
-        // Determinar tipo de asiento
+        
         String tipoAsiento = "NORMAL";
         Vehiculo vehiculo = viaje.getVehiculo();
         if (vehiculo instanceof BusDosPisos) {
@@ -710,12 +687,12 @@ public class SeleccionAsientosFrame extends JFrame {
     
     private void confirmarVenta(String dni, String nombre, int edad, JLabel lblPrecio) {
         try {
-            // Validar DNI
+            
             if (dni.length() != 8 || !dni.matches("\\d+")) {
                 throw new Exception("El DNI debe tener 8 dígitos numéricos");
             }
             
-            // Buscar o crear pasajero
+            
             Pasajero pasajero = pasajeroDAO.buscarPorDni(dni);
             if (pasajero == null) {
                 pasajero = new Pasajero(dni, nombre, edad);
@@ -723,13 +700,13 @@ public class SeleccionAsientosFrame extends JFrame {
                     throw new Exception("Error al registrar pasajero");
                 }
             } else {
-                // Actualizar datos si es necesario
+                
                 pasajero.setNombre(nombre);
                 pasajero.setEdad(edad);
                 pasajeroDAO.actualizar(pasajero);
             }
             
-            // Calcular precio final
+            
             String tipoAsiento = "NORMAL";
             Vehiculo vehiculo = viaje.getVehiculo();
             if (vehiculo instanceof BusDosPisos) {
@@ -742,7 +719,7 @@ public class SeleccionAsientosFrame extends JFrame {
             double precioBase = viaje.getRuta().getPrecioBase();
             double precioFinal = calculadora.calcularPrecioFinal(precioBase, tipoAsiento, edad);
             
-            // Crear boleto con tipo de asiento
+            
             Boleto boleto = new Boleto(viaje.getId(), pasajero.getId(), asientoSeleccionado, tipoAsiento, precioFinal);
             
             if (boletoDAO.guardar(boleto)) {
@@ -764,7 +741,7 @@ public class SeleccionAsientosFrame extends JFrame {
                 
                 JOptionPane.showMessageDialog(this, mensaje, "Venta Exitosa", JOptionPane.INFORMATION_MESSAGE);
                 
-                // Actualizar dashboard
+                
                 if (parent instanceof VentaPasajesFrame) {
                     ((VentaPasajesFrame) parent).actualizarVentas();
                 }
