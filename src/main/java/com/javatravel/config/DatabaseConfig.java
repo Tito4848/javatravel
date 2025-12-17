@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DatabaseConfig {
     private static final String URL = "jdbc:mysql://localhost:3306/javatravel_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
     private static final String USER = "root";
-    private static final String PASSWORD = "admin123"; 
+    private static final String PASSWORD = "admin"; 
     
     public static Connection getConnection() throws SQLException {
         try {
